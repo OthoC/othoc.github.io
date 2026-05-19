@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CG Repuestos — Generadores & Equipos</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E02020;
+    --dark-red: #B01818;
+    --black: #0A0A0A;
+    --dark: #111111;
+    --card-bg: #181818;
+    --mid: #222222;
+    --light: #F5F5F5;
+    --muted: #888888;
+    --accent: #FF3C3C;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--light);
+    font-family: 'Barlow', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px;
+    height: 64px;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none;
+  }
+  .logo-badge {
+    width: 38px; height: 38px;
+    background: var(--red);
+    display: flex; align-items: center; justify-content: center;
+    clip-path: polygon(0 0, 100% 0, 100% 78%, 50% 100%, 0 78%);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: white;
+    letter-spacing: -1px;
+  }
+  .logo-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--light);
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex; gap: 32px;
+  }
+  nav ul a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    transition: color .2s;
+  }
+  nav ul a:hover { color: var(--light); }
+
+  .nav-cta {
+    background: var(--red);
+    color: white !important;
+    padding: 8px 18px;
+    font-size: 12px !important;
+    letter-spacing: 2px !important;
+    transition: background .2s !important;
+  }
+  .nav-cta:hover { background: var(--dark-red) !important; color: white !important; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 120px 48px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(224,32,32,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(224,32,32,0.06) 0%, transparent 50%);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black, transparent);
+  }
+
+  .hero-content {
+    position: relative; z-index: 1;
+    max-width: 640px;
+  }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(224,32,32,0.12);
+    border: 1px solid rgba(224,32,32,0.3);
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+    animation: fadeUp .6s ease both;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+  .hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 8vw, 96px);
+    line-height: .95;
+    letter-spacing: 2px;
+    color: var(--light);
+    animation: fadeUp .6s .1s ease both;
+  }
+  .hero h1 span { color: var(--red); }
+
+  .hero p {
+    margin-top: 24px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--muted);
+    max-width: 480px;
+    animation: fadeUp .6s .2s ease both;
+  }
+
+  .hero-btns {
+    margin-top: 36px;
+    display: flex; gap: 16px; flex-wrap: wrap;
+    animation: fadeUp .6s .3s ease both;
+  }
+
+  .btn-primary {
+    background: var(--red);
+    color: white;
+    padding: 14px 32px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none; cursor: pointer;
+    transition: background .2s, transform .15s;
+  }
+  .btn-primary:hover { background: var(--dark-red); transform: translateY(-2px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--light);
+    padding: 14px 32px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: border-color .2s, transform .15s;
+  }
+  .btn-outline:hover { border-color: var(--light); transform: translateY(-2px); }
+
+  .hero-stats {
+    margin-top: 60px;
+    display: flex; gap: 48px;
+    animation: fadeUp .6s .4s ease both;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+    color: var(--light);
+    line-height: 1;
+  }
+  .stat-num span { color: var(--red); }
+  .stat-label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(24px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(224,32,32,0.4), transparent);
+    margin: 0 48px;
+  }
+
+  /* ── CATALOG ── */
+  .catalog {
+    padding: 96px 48px;
+  }
+
+  .section-header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 56px;
+  }
+
+  .section-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 5vw, 60px);
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+
+  /* Filter tabs */
+  .filter-tabs {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+  .filter-tab {
+    padding: 8px 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .filter-tab.active,
+  .filter-tab:hover {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+  }
+
+  /* Product grid */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2px;
+  }
+
+   .product-card {
+    background: var(--card-bg);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform .3s;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .product-card:hover { transform: translateY(-4px); }
+  .product-card:hover .card-overlay { opacity: 1; }
+  .product-card:hover .card-img img { transform: scale(1.04); }
+
+  .card-img {
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: white;
+    position: relative;
+  }
+  .card-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform .4s ease;
+    display: block;
+  }
+
+  .card-overlay {
+    position: absolute; inset: 0;
+    background: rgba(224,32,32,0.85);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .card-overlay span {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: white;
+    border: 2px solid white;
+    padding: 10px 24px;
+  }
+
+  .card-category {
+    position: absolute;
+    top: 12px; left: 12px;
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    z-index: 1;
+  }
+
+  .card-body {
+    padding: 20px 24px 24px;
+    border-top: 2px solid transparent;
+    transition: border-color .3s;
+  }
+  .product-card:hover .card-body { border-top-color: var(--red); }
+
+  .card-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    line-height: 1.2;
+    color: var(--light);
+  }
+
+  .card-desc {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 16px;
+  }
+
+  .card-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #4CAF50;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .card-badge::before {
+    content: '';
+    width: 5px; height: 5px;
+    background: #4CAF50;
+    border-radius: 50%;
+  }
+
+  .card-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--muted);
+    padding: 7px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .card-btn:hover {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+  }
+
+  /* ── WHY US ── */
+  .why-section {
+    padding: 80px 48px;
+    background: var(--dark);
+  }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 32px;
+    margin-top: 56px;
+  }
+  .why-card {
+    padding: 32px 28px;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+  .why-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--red);
+  }
+  .why-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .why-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .why-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── CONTACT ── */
+  .contact-section {
+    padding: 96px 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(224,32,32,0.08), transparent);
+  }
+  .contact-inner {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .contact-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 1;
+    letter-spacing: 2px;
+  }
+  .contact-title span { color: var(--red); }
+  .contact-subtitle {
+    margin-top: 20px;
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 400px;
+  }
+  .contact-items {
+    display: flex; flex-direction: column; gap: 24px;
+  }
+  .contact-item {
+    display: flex; align-items: center; gap: 20px;
+    padding: 20px 24px;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-left: 3px solid var(--red);
+    text-decoration: none;
+    transition: background .2s;
+  }
+  .contact-item:hover { background: var(--mid); }
+  .contact-item-icon { font-size: 24px; }
+  .contact-item-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 4px;
+  }
+  .contact-item-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--light);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 32px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .footer-copy {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .footer-copy span { color: var(--red); }
+
+  /* ── MODAL ── */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s;
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.1);
+    max-width: 520px; width: 90%;
+    padding: 40px;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform .3s;
+  }
+  .modal-backdrop.open .modal { transform: translateY(0); }
+  .modal-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none;
+    color: var(--muted); font-size: 22px;
+    cursor: pointer; transition: color .2s;
+  }
+  .modal-close:hover { color: var(--light); }
+  .modal-img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    background: white;
+    margin-bottom: 24px;
+    display: block;
+  }
+  .modal-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .modal-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  .modal-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* whatsapp float */
+  .wa-float {
+    position: fixed; bottom: 28px; right: 28px;
+    width: 56px; height: 56px;
+    background: #25D366;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 150;
+    box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+    text-decoration: none;
+    transition: transform .2s;
+  }
+  .wa-float:hover { transform: scale(1.1); }
+  .wa-float svg { width: 28px; height: 28px; fill: white; }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; }
+    nav ul { display: none; }
+    .hero { padding: 100px 20px 60px; }
+    .hero-stats { gap: 28px; }
+    .catalog { padding: 60px 20px; }
+    .section-divider { margin: 0 20px; }
+    .why-section { padding: 60px 20px; }
+    .contact-section { padding: 60px 20px; }
+    .contact-inner { grid-template-columns: 1fr; gap: 40px; }
+    footer { padding: 24px 20px; flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-badge">CG</div>
+    <span class="logo-text">Repuestos</span>
+  </a>
+  <ul>
+    <li><a href="#catalogo">Catálogo</a></li>
+    <li><a href="#nosotros">Nosotros</a></li>
+    <li><a href="#contacto" class="nav-cta">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Repuestos Originales y Compatibles</div>
+    <h1>REPUESTOS PARA<br><span>GENERADORES</span><br>& EQUIPOS</h1>
+    <p>Sensores, módulos de control, filtros y tarjetas AVR para generadores industriales. Envíos a todo el Ecuador.</p>
+    <div class="hero-btns">
+      <a href="#catalogo" class="btn-primary">Ver Catálogo</a>
+      <a href="https://wa.me/593960809770" target="_blank" class="btn-outline">Cotizar ahora</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">7<span>+</span></div>
+        <div class="stat-label">Productos</div>
+      </div>
+      <div>
+        <div class="stat-num">24<span>h</span></div>
+        <div class="stat-label">Respuesta</div>
+      </div>
+      <div>
+        <div class="stat-num">EC<span>✓</span></div>
+        <div class="stat-label">Todo Ecuador</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- CATALOG -->
+<section class="catalog" id="catalogo">
+  <div class="section-header">
+    <div>
+      <div class="section-tag">// Catálogo de Productos</div>
+      <h2 class="section-title">NUESTROS<br>REPUESTOS</h2>
+    </div>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="filterCards('all', this)">Todos</button>
+    <button class="filter-tab" onclick="filterCards('sensor', this)">Sensores</button>
+    <button class="filter-tab" onclick="filterCards('modulo', this)">Módulos</button>
+    <button class="filter-tab" onclick="filterCards('filtro', this)">Filtros</button>
+    <button class="filter-tab" onclick="filterCards('avr', this)">Tarjetas AVR</button>
+  </div>
+
+  <div class="product-grid" id="productGrid">
+
+    <!-- 1. Sensor de presión -->
+    <div class="product-card" data-cat="sensor" onclick="openModal(this)">
+      <div class="card-img">
+        <img src="C:\Users\DELL\Desktop\VENTA DE REPUESTOS-DATOS\Pag\othoc.github.io\imagenes\1.png"
+             alt="Sensor de Presión de Aceite Meierli"
+             onerror="this.src='https://placehold.co/400x400/1a1a1a/888?text=Sensor+Presión'">
+        <div class="card-overlay"><span>Ver detalles</span></div>
+        <span class="card-category">Sensor</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Sensor de Presión de Aceite Meierli</div>
+        <div class="card-desc">Sensor de presión de aceite de alta precisión para generadores industriales.</div>
+        <div class="card-footer">
+          <span class="card-badge">En stock</span>
+          <a href="https://wa.me/593968601925?text=Hola, me interesa el Sensor de Presión de Aceite Meierli" target="_blank" class="card-btn">Cotizar</a>
+        </div>
+      </div>
+      <span class="modal-full-desc" hidden>Sensor de presión de aceite marca Meierli. Compatible con generadores industriales. Conexión de 2 terminales. Ideal para sistemas de monitoreo y protección del motor.</span>
+    </div>
+
+    <!-- 2. Módulo DSE 4520 -->
+    <div class="product-card" data-cat="modulo" onclick="openModal(this)">
+      <div class="card-img">
+        <img src="C:\Users\DELL\Desktop\VENTA DE REPUESTOS-DATOS\PUBLICIDAD\1779193516874_2.png"
+             alt="Módulo DSE 4520 MKII"
+             onerror="this.src='https://placehold.co/400x400/1a1a1a/888?text=DSE+4520'">
+        <div class="card-overlay"><span>Ver detalles</span></div>
+        <span class="card-category">Módulo</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Módulo DSE 4520 MKII</div>
+        <div class="card-desc">Controlador automático de arranque para grupos electrógenos. Deep Sea Electronics.</div>
+        <div class="card-footer">
+          <span class="card-badge">En stock</span>
+          <a href="https://wa.me/593968601925?text=Hola, me interesa el Módulo DSE 4520 MKII" target="_blank" class="card-btn">Cotizar</a>
+        </div>
+      </div>
+      <span class="modal-full-desc" hidden>Módulo de control DSE 4520 MKII de Deep Sea Electronics. Panel con pantalla LCD, botones Stop/Auto/Start. Ideal para control automático de generadores de transferencia automática.</span>
+    </div>
+
+    <!-- 3. Fuel Filter B10-AL 496 -->
+    <div class="product-card" data-cat="filtro" onclick="openModal(this)">
+      <div class="card-img">
+        <img src="C:\Users\DELL\Desktop\VENTA DE REPUESTOS-DATOS\PUBLICIDAD\1779193516878_3.png"
+             alt="Fuel Filter B10-AL 496"
+             onerror="this.src='https://placehold.co/400x400/1a1a1a/888?text=Fuel+Filter+B10'">
+        <div class="card-overlay"><span>Ver detalles</span></div>
+        <span class="card-category">Filtro</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Fuel Filter B10-AL 496</div>
+        <div class="card-desc">Filtro de combustible de alta eficiencia con cuerpo de aluminio. Separación de agua.</div>
+        <div class="card-footer">
+          <span class="card-badge">En stock</span>
+          <a href="https://wa.me/593968601925?text=Hola, me interesa el Fuel Filter B10-AL 496" target="_blank" class="card-btn">Cotizar</a>
+        </div>
+      </div>
+      <span class="modal-full-desc" hidden>Filtro de combustible B10-AL 496 con cuerpo de aluminio fundido. Separa agua y partículas del combustible, protegiendo la bomba y los inyectores del generador.</span>
+    </div>
+
+    <!-- 4. Fuel Filter 500FG -->
+    <div class="product-card" data-cat="filtro" onclick="openModal(this)">
+      <div class="card-img">
+        <img src="C:\Users\DELL\Desktop\VENTA DE REPUESTOS-DATOS\PUBLICIDAD\1779193516880_4.png"
+             alt="Fuel Filter 500FG"
+             onerror="this.src='https://placehold.co/400x400/1a1a1a/888?text=Fuel+Filter+500FG'">
+        <div class="card-overlay"><span>Ver detalles</span></div>
+        <span class="card-category">Filtro</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Fuel Filter 500FG</div>
+        <div class="card-desc">Separador de agua y combustible completo con accesorios de instalación incluidos.</div>
+        <div class="card-footer">
+          <span class="card-badge">En stock</span>
+          <a href="https://wa.me/593968601925?text=Hola, me interesa el Fuel Filter 500FG" target="_blank" class="card-btn">Cotizar</a>
+        </div>
+      </div>
+      <span class="modal-full-desc" hidden>Filtro separador de agua y combustible 500FG. Kit completo que incluye juntas tóricas, adaptadores y accesorios de montaje. Compatible con la mayoría de generadores diésel.</span>
+    </div>
+
+    <!-- 5. Tarjeta AVR AS440 -->
+    <div class="product-card" data-cat="avr" onclick="openModal(this)">
+      <div class="card-img">
+        <img src="C:\Users\DELL\Desktop\VENTA DE REPUESTOS-DATOS\PUBLICIDAD\1779193516883_5.png"
+             alt="Tarjeta AVR Shaluo AS440"
+             onerror="this.src='https://placehold.co/400x400/1a1a1a/888?text=AVR+AS440'">
+        <div class="card-overlay"><span>Ver detalles</span></div>
+        <span class="card-category">AVR</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Tarjeta AVR Shaluo AS440</div>
+        <div class="card-desc">Regulador automático de voltaje para alternadores de generadores. Modelo AS440.</div>
+        <div class="card-footer">
+          <span class="card-badge">En stock</span>
+          <a href="https://wa.me/593968601925?text=Hola, me interesa la Tarjeta AVR Shaluo AS440" target="_blank" class="card-btn">Cotizar</a>
+        </div>
+      </div>
+      <span class="modal-full-desc" hidden>Tarjeta AVR Shaluo AS440. Regulador automático de voltaje compatible con alternadores Stamford y similares. Mantiene la tensión estable ante variaciones de carga.</span>
+    </div>
+
+    <!-- 6. Tarjeta AVR SX460 -->
+    <div class="product-card" data-cat="avr" onclick="openModal(this)">
+      <div class="card-img">
+        <img src="C:\Users\DELL\Desktop\VENTA DE REPUESTOS-DATOS\PUBLICIDAD\1779193516885_6.png"
+             alt="Tarjeta AVR Shaluo SX460"
+             onerror="this.src='https://placehold.co/400x400/1a1a1a/888?text=AVR+SX460'">
+        <div class="card-overlay"><span>Ver detalles</span></div>
+        <span class="card-category">AVR</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Tarjeta AVR Shaluo SX460</div>
+        <div class="card-desc">Regulador de voltaje modelo SX460 para alternadores de generadores industriales.</div>
+        <div class="card-footer">
+          <span class="card-badge">En stock</span>
+          <a href="https://wa.me/593968601925?text=Hola, me interesa la Tarjeta AVR Shaluo SX460" target="_blank" class="card-btn">Cotizar</a>
+        </div>
+      </div>
+      <span class="modal-full-desc" hidden>Tarjeta AVR Shaluo SX460 (E000-24600). Regulador de voltaje de alta confiabilidad para alternadores síncronos. Advertencia: terminales vivos y disipador de calor energizados.</span>
+    </div>
+
+    <!-- 7. Módulo DSE 7420 -->
+    <div class="product-card" data-cat="modulo" onclick="openModal(this)">
+      <div class="card-img">
+        <img src="C:\Users\DELL\Desktop\VENTA DE REPUESTOS-DATOS\PUBLICIDAD\1779193516887_7.png"
+             alt="Módulo DSE 7420 MKII"
+             onerror="this.src='https://placehold.co/400x400/1a1a1a/888?text=DSE+7420'">
+        <div class="card-overlay"><span>Ver detalles</span></div>
+        <span class="card-category">Módulo</span>
+      </div>
+      <div class="card-body">
+        <div class="card-name">Módulo DSE 7420 MKII</div>
+        <div class="card-desc">Controlador avanzado de conmutación automática de red. Pantalla LCD a color.</div>
+        <div class="card-footer">
+          <span class="card-badge">En stock</span>
+          <a href="https://wa.me/593968601925?text=Hola, me interesa el Módulo DSE 7420 MKII" target="_blank" class="card-btn">Cotizar</a>
+        </div>
+      </div>
+      <span class="modal-full-desc" hidden>Módulo DSE 7420 MKII de Deep Sea Electronics. Controlador de transferencia automática con pantalla LCD en color. Monitorea voltajes L1-L2, L2-L3, L3-L1. Incluye control manual y automático del generador.</span>
+    </div>
+
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- WHY US -->
+<section class="why-section" id="nosotros">
+  <div class="section-tag">// Por qué elegirnos</div>
+  <h2 class="section-title">CONFIANZA &<br>EXPERIENCIA</h2>
+  <div class="why-grid">
+    <div class="why-card">
+      <span class="why-icon">⚙️</span>
+      <div class="why-title">Repuestos Especializados</div>
+      <div class="why-text">Sensores, módulos, filtros y tarjetas AVR para generadores industriales de todas las marcas.</div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">🚚</span>
+      <div class="why-title">Envíos a Todo Ecuador</div>
+      <div class="why-text">Entregamos en Quito y enviamos a todo el país. Rápido y seguro.</div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">💬</span>
+      <div class="why-title">Asesoría Técnica</div>
+      <div class="why-text">Te ayudamos a identificar el repuesto correcto para tu equipo. Contáctanos por WhatsApp.</div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">✅</span>
+      <div class="why-title">Garantía de Producto</div>
+      <div class="why-text">Todos nuestros repuestos son verificados. Calidad garantizada en cada componente.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contacto">
+  <div class="contact-bg"></div>
+  <div class="contact-inner">
+    <div>
+      <div class="section-tag">// Contáctanos</div>
+      <h2 class="contact-title">HABLEMOS<br><span>HOY MISMO</span></h2>
+      <p class="contact-subtitle">¿Necesitas un repuesto específico? Contáctanos por WhatsApp o escríbenos al correo y te ayudamos de inmediato.</p>
+    </div>
+    <div class="contact-items">
+      <a href="https://wa.me/593968601925" target="_blank" class="contact-item">
+        <span class="contact-item-icon">📱</span>
+        <div>
+          <div class="contact-item-label">WhatsApp</div>
+          <div class="contact-item-value">0968 601 925</div>
+        </div>
+      </a>
+      <a href="https://wa.me/593968601925" target="_blank" class="contact-item">
+        <span class="contact-item-icon">📲</span>
+        <div>
+          <div class="contact-item-label">Teléfono alternativo</div>
+          <div class="contact-item-value">0983 322 855</div>
+        </div>
+      </a>
+      <a href="mailto:alexandercantos161@gmail.com" class="contact-item">
+        <span class="contact-item-icon">✉️</span>
+        <div>
+          <div class="contact-item-label">Correo electrónico</div>
+          <div class="contact-item-value">alexandercantos161@gmail.com</div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-copy">© 2025 <span>CG Repuestos</span> — Quito, Ecuador</div>
+  <div class="footer-copy">Repuestos para generadores e industria</div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/593968601925" target="_blank" class="wa-float" title="Chatea por WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <img class="modal-img" id="modalImg" src="" alt="">
+    <div class="modal-name" id="modalName"></div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-btns">
+      <a id="modalWA" href="#" target="_blank" class="btn-primary">Cotizar por WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Filter
+  function filterCards(cat, btn) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.product-card').forEach(card => {
+      if (cat === 'all' || card.dataset.cat === cat) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  // Modal
+  function openModal(card) {
+    const img = card.querySelector('.card-img img');
+    const name = card.querySelector('.card-name').textContent;
+    const desc = card.querySelector('.modal-full-desc').textContent;
+
+    document.getElementById('modalImg').src = img.src;
+    document.getElementById('modalImg').alt = name;
+    document.getElementById('modalName').textContent = name;
+    document.getElementById('modalDesc').textContent = desc;
+    document.getElementById('modalWA').href =
+      `https://wa.me/593968691925?text=Hola, me interesa: ${encodeURIComponent(name)}`;
+
+    document.getElementById('modalBackdrop').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    document.getElementById('modalBackdrop').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function closeModalOutside(e) {
+    if (e.target === document.getElementById('modalBackdrop')) closeModal();
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
